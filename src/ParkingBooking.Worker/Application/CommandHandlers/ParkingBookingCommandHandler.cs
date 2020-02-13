@@ -4,13 +4,14 @@ using ParkingBooking.Booking.Domain.Commands;
 using ParkingBooking.Booking.Domain.Entities;
 using ParkingBooking.Booking.Domain.Events;
 using ParkingBooking.Booking.Domain.ValueObjects;
+using ParkingBooking.Worker.Application.Abstractions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ParkingBooking.Worker.Application.CommandHandlers
 {
-    public class ParkingBookingCommandHandler 
+    public class ParkingBookingCommandHandler  : ICommandHandler<BookParkingCommand>
     {
         private readonly IGarageRepository _garageRepository;
         private readonly IServiceBus _bus;
@@ -33,6 +34,7 @@ namespace ParkingBooking.Worker.Application.CommandHandlers
             if (garage == null)
             {
                 //not found
+                return true;
             }
 
             var parkingPeriod = new ParkingPeriod(
@@ -57,7 +59,8 @@ namespace ParkingBooking.Worker.Application.CommandHandlers
                     request.GarageId,
                     request.LicensePlate,
                     request.From,
-                    request.To), _bookingReslutTopicKey);
+                    request.To,
+                    parkingSpot.Reference), _bookingReslutTopicKey);
 
             return true;
         }

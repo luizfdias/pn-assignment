@@ -13,13 +13,16 @@ namespace ParkingBooking.Booking.Domain.Events
 
         public DateTime To { get; }
 
-        public ParkingBooked(Guid garageId, string licensePlate, DateTime from, DateTime to)
+        public string Reference { get; set; }
+
+        public ParkingBooked(Guid garageId, string licensePlate, DateTime from, DateTime to, string reference)
             : base(Guid.NewGuid())
         {
             GarageId = garageId;
             LicensePlate = licensePlate;
             From = from;
             To = to;
+            Reference = reference;
         }
     }
 }

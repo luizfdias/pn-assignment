@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ParkingBooking.Booking.Api.Filters;
 using ParkingBooking.Booking.Api.Modules;
 
 namespace ParkingBooking.Booking.Api
@@ -22,6 +23,7 @@ namespace ParkingBooking.Booking.Api
             services.AddApplicationModule(Configuration);
             services.AddInfrastructureModule(Configuration);
             services.AddAutoMapperConfiguration();
+            services.AddMvc(opt => opt.Filters.Add<ExceptionsFilter>());
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

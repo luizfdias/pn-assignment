@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ParkingBooking.Worker.Modules;
 
 namespace ParkingBooking.Worker
 {
@@ -18,7 +19,10 @@ namespace ParkingBooking.Worker
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddLogging();
                     services.AddHostedService<Worker>();
+                    services.AddApplicationModule(hostContext.Configuration);
+                    services.AddInfrastructureModule(hostContext.Configuration);
                 });
     }
 }
