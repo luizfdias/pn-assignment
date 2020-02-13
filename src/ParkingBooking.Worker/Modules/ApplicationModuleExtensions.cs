@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using ParkingBooking.Booking.Api.Application.Abstractions;
 using ParkingBooking.Booking.Domain.Abstractions.Repositories;
 using ParkingBooking.Booking.Domain.Commands;
@@ -19,7 +20,8 @@ namespace ParkingBooking.Worker.Modules
                 => new ParkingBookingCommandHandler(
                     ctx.GetRequiredService<IGarageRepository>(),
                     ctx.GetRequiredService<IServiceBus>(),
-                    configuration["azureServiceBus:bookParkingResultTopicKey"]));
+                    configuration["azureServiceBus:bookParkingResultTopicKey"],
+                    ctx.GetService<ILogger<ParkingBookingCommandHandler>>()));
 
             services.AddSingleton<IEventHandler, BookingResultEventHandler>();
             services.AddSingleton<INotificationService<string>, EmailNotification>();

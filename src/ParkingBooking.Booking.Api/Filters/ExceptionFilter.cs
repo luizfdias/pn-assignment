@@ -7,9 +7,9 @@ namespace ParkingBooking.Booking.Api.Filters
 {
     public class ExceptionsFilter : ExceptionFilterAttribute
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<ExceptionsFilter> _logger;
 
-        public ExceptionsFilter(ILogger logger)
+        public ExceptionsFilter(ILogger<ExceptionsFilter> logger)
         {
             _logger = logger;
         }

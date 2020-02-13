@@ -35,17 +35,26 @@ namespace ParkingBooking.Worker
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await _bus.ListenCommand<BookParkingCommand>((command) =>
-                _bookParkingCommandHandler.Handle(command, new CancellationToken()), 
+            try
+            {
+                await _bus.ListenCommand<BookParkingCommand>((command) =>
+                _bookParkingCommandHandler.Handle(command, new CancellationToken()),
                 _configuration["azureServiceBus:bookParkingQueueKey"]);
 
-            await _bus.ListenEvent<ParkingAlreadyTaken>((@event) =>
-                _eventHandler.Handle(@event),
-                _configuration["azureServiceBus:bookParkingResultTopicKey"]);
+                await _bus.ListenEvent<ParkingAlreadyTaken>((@event) =>
+                    _eventHandler.Handle(@event),
+                    _configuration["azureServiceBus:bookParkingResultTopicKey"],
+                    _configuration["azureServiceBus:bookParkingSubscriptionName"]);
 
-            await _bus.ListenEvent<ParkingBooked>((@event) =>
-                _eventHandler.Handle(@event),
-                _configuration["azureServiceBus:bookParkingResultTopicKey"]);
+                await _bus.ListenEvent<ParkingBooked>((@event) =>
+                    _eventHandler.Handle(@event),
+                    _configuration["azureServiceBus:bookParkingResultTopicKey"],
+                    _configuration["azureServiceBus:bookParkingSubscriptionName"]);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to initialize the parking booking worker.");
+            }            
         }
     }
 }

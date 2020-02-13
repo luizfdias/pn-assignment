@@ -1,4 +1,5 @@
-﻿using ParkingBooking.Booking.Api.Application.Abstractions;
+﻿using Microsoft.Extensions.Logging;
+using ParkingBooking.Booking.Api.Application.Abstractions;
 using ParkingBooking.Booking.Domain.Abstractions.Repositories;
 using ParkingBooking.Booking.Domain.Commands;
 using ParkingBooking.Booking.Domain.Entities;
@@ -11,20 +12,23 @@ using System.Threading.Tasks;
 
 namespace ParkingBooking.Worker.Application.CommandHandlers
 {
-    public class ParkingBookingCommandHandler  : ICommandHandler<BookParkingCommand>
+    public class ParkingBookingCommandHandler : ICommandHandler<BookParkingCommand>
     {
         private readonly IGarageRepository _garageRepository;
         private readonly IServiceBus _bus;
         private readonly string _bookingReslutTopicKey;
+        private readonly ILogger<ParkingBookingCommandHandler> _logger;
 
         public ParkingBookingCommandHandler(
             IGarageRepository garageRepository,
             IServiceBus bus,
-            string bookingResultTopicKey)
+            string bookingResultTopicKey,
+            ILogger<ParkingBookingCommandHandler> logger)
         {
             _garageRepository = garageRepository ?? throw new ArgumentNullException(nameof(garageRepository));
             _bus = bus ?? throw new ArgumentNullException(nameof(bus));
             _bookingReslutTopicKey = bookingResultTopicKey ?? throw new ArgumentNullException(nameof(bookingResultTopicKey));
+            _logger = logger;
         }
 
         public async Task<bool> Handle(BookParkingCommand request, CancellationToken cancellationToken)
@@ -33,7 +37,7 @@ namespace ParkingBooking.Worker.Application.CommandHandlers
 
             if (garage == null)
             {
-                //not found
+                _logger?.LogWarning($"Garage {request.GarageId} not found.");
                 return true;
             }
 
@@ -56,11 +60,11 @@ namespace ParkingBooking.Worker.Application.CommandHandlers
             }
 
             await _bus.RaiseEvent(new ParkingBooked(
-                    request.GarageId,
-                    request.LicensePlate,
-                    request.From,
-                    request.To,
-                    parkingSpot.Reference), _bookingReslutTopicKey);
+                request.GarageId,
+                request.LicensePlate,
+                request.From,
+                request.To,
+                parkingSpot.Reference), _bookingReslutTopicKey);
 
             return true;
         }

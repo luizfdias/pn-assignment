@@ -12,6 +12,6 @@ namespace ParkingBooking.Booking.Api.Application.Abstractions
 
         Task ListenCommand<T>(Func<T, Task> onReceivedAsync, string queueKey) where T : Command;
 
-        Task ListenEvent<T>(Func<T, Task> onReceivedAsync, string topicKey) where T : Event;
+        Task ListenEvent<T>(Func<T, Task> onReceivedAsync, string topicKey, string subscriptionName) where T : Event;
     }
 }

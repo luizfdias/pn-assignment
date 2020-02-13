@@ -16,33 +16,13 @@ namespace ParkingBooking.Booking.Infrastructure.Bus
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
-                throw new System.ArgumentException("message", nameof(connectionString));
+                throw new ArgumentException(nameof(connectionString));
             }
 
             _connectionString = connectionString;
         }
 
         public Task ListenCommand<T>(Func<T, Task> onReceivedAsync, string queueKey) where T : Command
-        {
-            return Listen<T>(onReceivedAsync, queueKey);
-        }
-
-        public Task ListenEvent<T>(Func<T, Task> onReceivedAsync, string topicKey) where T : Event
-        {
-            return Listen<T>(onReceivedAsync, topicKey);
-        }
-
-        public Task RaiseEvent<T>(T @event, string queueKey) where T : Event
-        {
-            return SendAsync(@event, queueKey);
-        }
-
-        public Task SendCommand<T>(T command, string topicKey) where T : Command
-        {
-            return SendAsync(command, topicKey);
-        }
-
-        private Task Listen<T>(Func<T, Task> onReceivedAsync, string queueKey)
         {
             var queueClient = new QueueClient(_connectionString, queueKey);
 
@@ -63,11 +43,43 @@ namespace ParkingBooking.Booking.Infrastructure.Bus
             return Task.CompletedTask;
         }
 
-        private Task SendAsync(object message, string key)
+        public Task ListenEvent<T>(Func<T, Task> onReceivedAsync, string topicKey, string subscriptionName) where T : Event
         {
-            var queueClient = new QueueClient(_connectionString, key);
+            var subscriptionClient = new SubscriptionClient(_connectionString, topicKey, subscriptionName);
 
-            var jsonMessage = JsonConvert.SerializeObject(message);
+            var messageHandlerOptions = CreateMessageHandlerOptions();
+
+            subscriptionClient.RegisterMessageHandler(async (msg, token) =>
+            {
+                var content = Encoding.UTF8.GetString(msg.Body);
+
+                var message = JsonConvert.DeserializeObject<T>(content);
+
+                await onReceivedAsync(message);
+
+                await subscriptionClient.CompleteAsync(msg.SystemProperties.LockToken);
+
+            }, messageHandlerOptions);
+
+            return Task.CompletedTask;
+        }
+
+        public Task RaiseEvent<T>(T @event, string topicKey) where T : Event
+        {
+            var topicClient = new TopicClient(_connectionString, topicKey);
+
+            var jsonMessage = JsonConvert.SerializeObject(@event);
+
+            var streamMessage = new Message(Encoding.UTF8.GetBytes(jsonMessage));
+
+            return topicClient.SendAsync(streamMessage);
+        }
+
+        public Task SendCommand<T>(T command, string topicKey) where T : Command
+        {
+            var queueClient = new QueueClient(_connectionString, topicKey);
+
+            var jsonMessage = JsonConvert.SerializeObject(command);
 
             var streamMessage = new Message(Encoding.UTF8.GetBytes(jsonMessage));
 

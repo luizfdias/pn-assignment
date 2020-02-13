@@ -10,6 +10,11 @@ namespace ParkingBooking.Booking.Domain.Entities
     {
         public ICollection<ParkingSpot> ParkingSpots { get; }
 
+        public Garage(Guid garageId) : base(garageId)
+        {
+            ParkingSpots = new List<ParkingSpot>();
+        }
+
         public Garage() : base(Guid.NewGuid())
         {
             ParkingSpots = new List<ParkingSpot>();

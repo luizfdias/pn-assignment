@@ -12,5 +12,10 @@ namespace ParkingBooking.Booking.Infrastructure.Databases
         {
             Entities = new List<TEntity>();
         }
+
+        public InMemoryDatabase(List<TEntity> entites)
+        {
+            Entities = entites;
+        }
     }
 }
