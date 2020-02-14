@@ -11,8 +11,7 @@ To get started in a development environment, it's only necessary to clone this r
 
 ### Prerequisites
 
-.NET CORE 3 or above
-Internet connection and access to azure cloud
+.NET CORE 3 or above, internet connection and access to azure cloud.
 
 ### Configuration
 
@@ -38,7 +37,7 @@ If the request was accepted, it will return the response:
   HTTP 202 Accepted
 ```
 
-The booking process is running asynchronous. Currently the result of the booking is only being logged, for tests purposes. Next you can see a simplified view of the booking flow process:
+The booking process will run asynchronous. Currently the result of the booking is only logged, as you can see next in a simplified view of the booking flow process:
 
 ![booking flow](https://raw.githubusercontent.com/luizfdias/pn-assignment/master/assets/booking-flow-1.png)
 
