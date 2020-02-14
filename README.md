@@ -11,8 +11,7 @@ To get started in a development environment, it's only necessary to clone this r
 
 ### Prerequisites
 
-.NET CORE 3 or above
-Internet connection and access to azure cloud
+.NET CORE 3 or above, internet connection and access to azure cloud.
 
 ### Configuration
 
@@ -20,13 +19,7 @@ All the configurations are already set in the appsettings.json.
 
 ## How to use the Parking Booking Api
 
-The API has 1 entry point for the parking booking as following:
-
-The provided {CorrelationId} must be the same between all callings. It will be used as the correlation identification of the whole process to check the diff and obtain the results.
-
-First step is provide the data to be Analyzed. The field 'content' must be filled with a Base64 encoded value.
-
-Here is a sample request to left and right resources:
+In order to book a parking, it is necessary to make a request as following:
 
 ```
   POST HOST/api/v1/ParkingBooking
@@ -38,17 +31,32 @@ Here is a sample request to left and right resources:
   }
 ```
 
-Here is a sample success response to both endpoints:
+If the request was accepted, it will return the response:
 
 ```
   HTTP 202 Accepted
 ```
+
+The booking process will run asynchronous. Currently the result of the booking is logged (in the console), as you can see next in a simplified view of the booking flow process:
+
+![booking flow](https://raw.githubusercontent.com/luizfdias/pn-assignment/master/assets/booking-flow-1.png)
+
+### Todo's:
+
+- Develop report feature
+- Implement validations of the API contracts and the commands
+- Improve the instrumentation in the whole flow
+- Improve the exception handling
+- Change the InMemoryDatabase for a real database
+- Increase the test code coverage, since currently only the domain and the api have tests
+- Add docker compose for initialization of all containers
 
 ## Built With
 API:
 * [ASP.NET CORE](https://www.asp.net/core/overview/aspnet-vnext)
 * [AutoMapper](https://automapper.org/) 
 * [Fluent Validation](https://fluentvalidation.net/)
+* [Azure service bus](https://azure.microsoft.com/en-us/services/service-bus/)
 
 Tests:
 * [AutoFixture](https://github.com/AutoFixture/AutoFixture) 
