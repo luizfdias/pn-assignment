@@ -20,13 +20,7 @@ All the configurations are already set in the appsettings.json.
 
 ## How to use the Parking Booking Api
 
-The API has 1 entry point for the parking booking as following:
-
-The provided {CorrelationId} must be the same between all callings. It will be used as the correlation identification of the whole process to check the diff and obtain the results.
-
-First step is provide the data to be Analyzed. The field 'content' must be filled with a Base64 encoded value.
-
-Here is a sample request to left and right resources:
+In order to book a parking, it is necessary to make a request as following:
 
 ```
   POST HOST/api/v1/ParkingBooking
@@ -38,17 +32,22 @@ Here is a sample request to left and right resources:
   }
 ```
 
-Here is a sample success response to both endpoints:
+If the request was accepted, it will return the response:
 
 ```
   HTTP 202 Accepted
 ```
+
+The booking process is running asynchronous. Currently the result of the booking is only being logged, for tests purposes. Next you can see a simplified view of the booking flow process:
+
+![booking flow](https://raw.githubusercontent.com/luizfdias/pn-assignment/master/assets/booking-flow-1.png)
 
 ## Built With
 API:
 * [ASP.NET CORE](https://www.asp.net/core/overview/aspnet-vnext)
 * [AutoMapper](https://automapper.org/) 
 * [Fluent Validation](https://fluentvalidation.net/)
+* [Azure service bus](https://azure.microsoft.com/en-us/services/service-bus/)
 
 Tests:
 * [AutoFixture](https://github.com/AutoFixture/AutoFixture) 
