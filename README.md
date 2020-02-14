@@ -37,9 +37,19 @@ If the request was accepted, it will return the response:
   HTTP 202 Accepted
 ```
 
-The booking process will run asynchronous. Currently the result of the booking is only logged, as you can see next in a simplified view of the booking flow process:
+The booking process will run asynchronous. Currently the result of the booking is logged (in the console), as you can see next in a simplified view of the booking flow process:
 
 ![booking flow](https://raw.githubusercontent.com/luizfdias/pn-assignment/master/assets/booking-flow-1.png)
+
+### Todo's:
+
+- Develop report feature
+- Implement validations of the API contracts and the commands
+- Improve the instrumentation in the whole flow
+- Improve the exception handling
+- Change the InMemoryDatabase for a real database
+- Increase the test code coverage, since currently only the domain and the api have tests
+- Add docker compose for initialization of all containers
 
 ## Built With
 API:
